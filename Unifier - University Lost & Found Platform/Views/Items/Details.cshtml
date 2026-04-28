@@ -1,0 +1,38 @@
+﻿@model Unifier___University_Lost___Found_Platform.Models.LostItem
+@{
+    ViewData["Title"] = "Item Details";
+}
+
+<div class="card p-4" style="max-width:600px;">
+    <h5 class="fw-bold mb-4"><i class="bi bi-info-circle"></i> Item Details</h5>
+
+    <table class="table table-bordered">
+        <tr><th>Title</th><td>@Model.Title</td></tr>
+        <tr><th>Description</th><td>@Model.Description</td></tr>
+        <tr><th>Category</th><td>@Model.Category</td></tr>
+        <tr><th>Location</th><td>@Model.Location</td></tr>
+        <tr><th>Date Reported</th><td>@Model.DateReported.ToString("dd/MM/yyyy")</td></tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                @if (Model.Status == "Lost")
+                {
+                    <span class="badge badge-lost">Lost</span>
+                }
+                else if (Model.Status == "Found")
+                {
+                    <span class="badge badge-found">Found</span>
+                }
+                else
+                {
+                    <span class="badge badge-claimed">Claimed</span>
+                }
+            </td>
+        </tr>
+        <tr><th>Reported By</th><td>@Model.ReportedByEmail</td></tr>
+    </table>
+
+    <a href="/Items/MyItems" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right"></i> Back
+    </a>
+</div>

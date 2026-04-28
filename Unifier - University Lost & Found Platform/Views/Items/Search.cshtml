@@ -1,0 +1,60 @@
+﻿@model List<Unifier___University_Lost___Found_Platform.Models.LostItem>
+@{
+    ViewData["Title"] = "Search";
+}
+
+<div class="card p-4">
+    <h5 class="fw-bold mb-3"><i class="bi bi-search"></i> Search Items</h5>
+    <form method="get" action="/Items/Search" class="d-flex gap-2 mb-4">
+        <input type="text" name="keyword" value="@ViewBag.Keyword"
+               class="form-control" placeholder="Search by name, location, or category..." />
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-search"></i> Search
+        </button>
+        <a href="/Items/Search" class="btn btn-outline-secondary">Clear</a>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-inbox" style="font-size:3rem;"></i>
+            <p class="mt-2">No results found.</p>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">@Model.Count result(s) found</p>
+        <div class="row g-3">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h6 class="fw-bold mb-1">@item.Title</h6>
+                            @if (item.Status == "Lost")
+                            {
+                                <span class="badge badge-lost">Lost</span>
+                            }
+                            else if (item.Status == "Found")
+                            {
+                                <span class="badge badge-found">Found</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-claimed">Claimed</span>
+                            }
+                        </div>
+                        <p class="text-muted small mb-1">@item.Description</p>
+                        <p class="small mb-1">
+                            <i class="bi bi-tag"></i> @item.Category &nbsp;
+                            <i class="bi bi-geo-alt"></i> @item.Location
+                        </p>
+                        <p class="small text-muted mb-0">
+                            <i class="bi bi-calendar"></i> @item.DateReported.ToString("dd/MM/yyyy")
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

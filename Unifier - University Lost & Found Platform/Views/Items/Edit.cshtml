@@ -1,0 +1,55 @@
+﻿@model Unifier___University_Lost___Found_Platform.Models.LostItem
+@{
+    ViewData["Title"] = "Edit Item";
+}
+
+<div class="card p-4" style="max-width:600px;">
+    <h5 class="fw-bold mb-4"><i class="bi bi-pencil"></i> Edit Item</h5>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ReportedByEmail" />
+        <input type="hidden" asp-for="DateReported" />
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger small"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Category</label>
+            <select asp-for="Category" class="form-select">
+                <option>Electronics</option>
+                <option>ID & Cards</option>
+                <option>Bags</option>
+                <option>Keys</option>
+                <option>Books</option>
+                <option>Clothing</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Location</label>
+            <input asp-for="Location" class="form-control" />
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">Status</label>
+            <select asp-for="Status" class="form-select">
+                <option value="Lost">Lost</option>
+                <option value="Found">Found</option>
+                <option value="Claimed">Claimed</option>
+            </select>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Save Changes
+            </button>
+            <a href="/Items/MyItems" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
