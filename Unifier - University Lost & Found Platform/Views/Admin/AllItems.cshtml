@@ -1,0 +1,96 @@
+﻿@using Unifier___University_Lost___Found_Platform.Models
+@{
+    ViewData["Title"] = "All Items";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var allItems = ViewBag.AllItems as List<LostItem>;
+}
+
+<h4 class="fw-bold mb-4"><i class="bi bi-grid"></i> All Items</h4>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h2 class="fw-bold" style="color:#ef5350;">@ViewBag.TotalLost</h2>
+            <p class="text-muted mb-0">Lost</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h2 class="fw-bold" style="color:#66bb6a;">@ViewBag.TotalFound</h2>
+            <p class="text-muted mb-0">Found</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h2 class="fw-bold" style="color:#ab47bc;">@ViewBag.TotalMatched</h2>
+            <p class="text-muted mb-0">Matched</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h2 class="fw-bold" style="color:#42a5f5;">@ViewBag.TotalClaimed</h2>
+            <p class="text-muted mb-0">Claimed</p>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Student ID</th>
+                    <th>Reported By</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (allItems != null)
+                {
+                    @foreach (var item in allItems)
+                    {
+                        <tr style="@(item.Status == "Matched" ? "background:#f3e5f5;" : item.Status == "Found" ? "background:#f1f8e9;" : "")">
+                            <td>@item.Id</td>
+                            <td>
+                                <strong>@item.Title</strong><br />
+                                <small class="text-muted">@item.Description</small>
+                            </td>
+                            <td>@item.Category</td>
+                            <td>@item.Location</td>
+                            <td>@item.StudentId</td>
+                            <td><small>@item.ReportedByEmail</small></td>
+                            <td>@item.DateReported.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (item.Status == "Lost")
+                                {
+                                    <span class="badge-lost">Lost</span>
+                                }
+                                else if (item.Status == "Found")
+                                {
+
+                                    <span class="badge-found">Found</span>
+                                }
+                                else if (item.Status == "Matched")
+                                {
+
+                                    <span class="badge-matched">✓ Matched</span>
+                                }
+                                else
+                                {
+
+                                    <span class="badge-claimed">Claimed</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

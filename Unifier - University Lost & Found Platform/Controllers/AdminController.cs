@@ -1,5 +1,5 @@
-﻿using Unifier___University_Lost___Found_Platform.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Unifier___University_Lost___Found_Platform.Data;
 
 namespace Unifier___University_Lost___Found_Platform.Controllers
 {
@@ -12,23 +12,48 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
                 return RedirectToAction("Login", "Account");
 
             if (HttpContext.Session.GetString("UserRole") != "Admin")
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Dashboard", "Student");
 
-            var items = StaticData.GetAllItems();
-            ViewBag.TotalLost = items.Count(i => i.Status == "Lost");
-            ViewBag.TotalFound = items.Count(i => i.Status == "Found");
-            ViewBag.TotalClaimed = items.Count(i => i.Status == "Claimed");
-            return View(items);
+            ViewBag.LostItems = StaticData.GetLostItems();
+            ViewBag.FoundItems = StaticData.GetFoundItems();
+            ViewBag.TotalLost = StaticData.GetLostItems().Count;
+            ViewBag.TotalFound = StaticData.GetFoundItems().Count;
+            ViewBag.TotalMatched = StaticData.LostItems.Count(i => i.Status == "Matched");
+
+            return View();
         }
 
-        // POST: /Admin/UpdateStatus
+        // GET: /Admin/AllItems
+        public IActionResult AllItems()
+        {
+            if (HttpContext.Session.GetString("UserEmail") == null)
+                return RedirectToAction("Login", "Account");
+
+            if (HttpContext.Session.GetString("UserRole") != "Admin")
+                return RedirectToAction("Dashboard", "Student");
+
+            ViewBag.AllItems = StaticData.GetAllItems();
+            ViewBag.TotalLost = StaticData.LostItems.Count(i => i.Status == "Lost");
+            ViewBag.TotalFound = StaticData.LostItems.Count(i => i.Status == "Found");
+            ViewBag.TotalMatched = StaticData.LostItems.Count(i => i.Status == "Matched");
+            ViewBag.TotalClaimed = StaticData.LostItems.Count(i => i.Status == "Claimed");
+            return View();
+        }
+
+        // POST: /Admin/Match
         [HttpPost]
-        public IActionResult UpdateStatus(int id, string status)
+        public IActionResult Match(int lostId, int foundId)
         {
             if (HttpContext.Session.GetString("UserRole") != "Admin")
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
 
-            StaticData.UpdateItemStatus(id, status);
+            var success = StaticData.MatchItems(lostId, foundId);
+
+            if (success)
+                TempData["Success"] = "✅ Items matched successfully!";
+            else
+                TempData["Error"] = "❌ Match failed. Please try again.";
+
             return RedirectToAction("Dashboard");
         }
     }

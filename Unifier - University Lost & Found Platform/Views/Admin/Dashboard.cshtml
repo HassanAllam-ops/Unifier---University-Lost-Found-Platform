@@ -1,90 +1,163 @@
-﻿@model List<Unifier___University_Lost___Found_Platform.Models.LostItem>
+﻿@using Unifier___University_Lost___Found_Platform.Models
 @{
-    ViewData["Title"] = "Admin Panel";
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var lostItems = ViewBag.LostItems as List<LostItem>;
+    var foundItems = ViewBag.FoundItems as List<LostItem>;
 }
 
-<h4 class="fw-bold mb-4"><i class="bi bi-shield-check"></i> Admin Dashboard</h4>
+<h4 class="fw-bold mb-4">
+    <i class="bi bi-arrow-left-right"></i> Match Items
+</h4>
 
 <!-- Stats -->
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="card p-3 text-center border-danger">
-            <h2 class="fw-bold text-danger">@ViewBag.TotalLost</h2>
-            <p class="mb-0">Lost</p>
+        <div class="card p-3 text-center">
+            <div style="font-size:2rem; color:#ef5350;">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+            <h2 class="fw-bold">@ViewBag.TotalLost</h2>
+            <p class="text-muted mb-0">Lost Items</p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3 text-center border-success">
-            <h2 class="fw-bold text-success">@ViewBag.TotalFound</h2>
-            <p class="mb-0">Found</p>
+        <div class="card p-3 text-center">
+            <div style="font-size:2rem; color:#66bb6a;">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <h2 class="fw-bold">@ViewBag.TotalFound</h2>
+            <p class="text-muted mb-0">Found Items</p>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-3 text-center border-info">
-            <h2 class="fw-bold text-info">@ViewBag.TotalClaimed</h2>
-            <p class="mb-0">Claimed</p>
+        <div class="card p-3 text-center">
+            <div style="font-size:2rem; color:#ab47bc;">
+                <i class="bi bi-link-45deg"></i>
+            </div>
+            <h2 class="fw-bold">@ViewBag.TotalMatched</h2>
+            <p class="text-muted mb-0">Matched Items</p>
         </div>
     </div>
 </div>
 
-<!-- All Items Table -->
+<!-- Match Section -->
 <div class="card p-4">
-    <h5 class="fw-bold mb-3">All Items</h5>
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Item</th>
-                    <th>Category</th>
-                    <th>Location</th>
-                    <th>Reported By</th>
-                    <th>Status</th>
-                    <th>Change Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
+    <h5 class="fw-bold mb-4">
+        <i class="bi bi-arrow-left-right"></i> Select items to Match
+    </h5>
+
+    <form method="post" action="/Admin/Match">
+        @Html.AntiForgeryToken()
+        <div class="row g-4">
+
+            <!-- Lost Items -->
+            <div class="col-md-6">
+                <h6 class="fw-bold mb-3" style="color:#ef5350;">
+                    <i class="bi bi-exclamation-circle"></i> Lost Items
+                </h6>
+                @if (lostItems == null || !lostItems.Any())
                 {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>
-                            <strong>@item.Title</strong><br />
-                            <small class="text-muted">@item.Description</small>
-                        </td>
-                        <td>@item.Category</td>
-                        <td>@item.Location</td>
-                        <td><small>@item.ReportedByEmail</small></td>
-                        <td>
-                            @if (item.Status == "Lost")
-                            {
-                                <span class="badge badge-lost">Lost</span>
-                            }
-                            else if (item.Status == "Found")
-                            {
-                                <span class="badge badge-found">Found</span>
-                            }
-                            else
-                            {
-                                <span class="badge badge-claimed">Claimed</span>
-                            }
-                        </td>
-                        <td>
-                            <form asp-action="UpdateStatus" asp-controller="Admin"
-                                  method="post" class="d-flex gap-1">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <select name="status" class="form-select form-select-sm"
-                                        style="width:auto;">
-                                    <option value="Lost">Lost</option>
-                                    <option value="Found">Found</option>
-                                    <option value="Claimed">Claimed</option>
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                            </form>
-                        </td>
-                    </tr>
+                    <div class="text-center py-4 text-muted border rounded-3">
+                        <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                        <p class="mt-2 mb-0">No lost items</p>
+                    </div>
                 }
-            </tbody>
-        </table>
-    </div>
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var item in lostItems)
+                        {
+                            <div class="border rounded-3 p-3" style="cursor:pointer;"
+                                 onclick="document.getElementById('lost_@item.Id').checked=true; highlightSelected(this, 'lost')">
+                                <div class="d-flex align-items-start gap-3">
+                                    <input type="radio" name="lostId" value="@item.Id"
+                                           id="lost_@item.Id" required
+                                           style="margin-top:4px; width:18px; height:18px;" />
+                                    <div>
+                                        <strong>@item.Title</strong><br />
+                                        <small class="text-muted">@item.Description</small><br />
+                                        <small>
+                                            <i class="bi bi-geo-alt"></i> @item.Location &nbsp;
+                                            <i class="bi bi-person"></i> @item.ReportedByEmail
+                                        </small><br />
+                                        <small>
+                                            <i class="bi bi-tag"></i> @item.Category &nbsp;
+                                            <i class="bi bi-card-text"></i> ID: @item.StudentId
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Found Items -->
+            <div class="col-md-6">
+                <h6 class="fw-bold mb-3" style="color:#66bb6a;">
+                    <i class="bi bi-check-circle"></i> Found Items
+                </h6>
+                @if (foundItems == null || !foundItems.Any())
+                {
+                    <div class="text-center py-4 text-muted border rounded-3">
+                        <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                        <p class="mt-2 mb-0">No found items</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var item in foundItems)
+                        {
+                            <div class="border rounded-3 p-3" style="cursor:pointer;"
+                                 onclick="document.getElementById('found_@item.Id').checked=true; highlightSelected(this, 'found')">
+                                <div class="d-flex align-items-start gap-3">
+                                    <input type="radio" name="foundId" value="@item.Id"
+                                           id="found_@item.Id" required
+                                           style="margin-top:4px; width:18px; height:18px;" />
+                                    <div>
+                                        <strong>@item.Title</strong><br />
+                                        <small class="text-muted">@item.Description</small><br />
+                                        <small>
+                                            <i class="bi bi-geo-alt"></i> @item.Location &nbsp;
+                                            <i class="bi bi-person"></i> @item.ReportedByEmail
+                                        </small><br />
+                                        <small>
+                                            <i class="bi bi-tag"></i> @item.Category &nbsp;
+                                            <i class="bi bi-card-text"></i> ID: @item.StudentId
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Match Button -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-5 py-2"
+                    style="font-size:1.1rem;">
+                <i class="bi bi-arrow-left-right"></i> Confirm Match
+            </button>
+        </div>
+    </form>
 </div>
+
+@section Scripts {
+    <script>
+        function highlightSelected(el, group) {
+            // شيل الـ highlight من كل الـ cards في نفس الـ group
+            const allCards = el.closest('.col-md-6').querySelectorAll('.border.rounded-3');
+            allCards.forEach(card => {
+                card.style.borderColor = '#dee2e6';
+                card.style.background = 'white';
+            });
+            // ضيف الـ highlight على الـ card المختار
+            el.style.borderColor = '#1a237e';
+            el.style.background = '#e8eaf6';
+        }
+    </script>
+}

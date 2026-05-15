@@ -1,0 +1,57 @@
+﻿@model Unifier___University_Lost___Found_Platform.Models.LostItem
+@{
+    ViewData["Title"] = "Edit Item";
+    Layout = "~/Views/Shared/_StudentLayout.cshtml";
+}
+
+<div class="card p-4" style="max-width:600px;">
+    <h5 class="fw-bold mb-4"><i class="bi bi-pencil"></i> Edit Item</h5>
+
+    <form method="post" action="/Student/Edit">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <input type="hidden" name="ReportedByEmail" value="@Model.ReportedByEmail" />
+        <input type="hidden" name="DateReported" value="@Model.DateReported" />
+        <input type="hidden" name="Status" value="@Model.Status" />
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Student ID</label>
+            <input type="text" name="StudentId" class="form-control"
+                   value="@Model.StudentId" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Title</label>
+            <input type="text" name="Title" class="form-control"
+                   value="@Model.Title" required />
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Description</label>
+            <textarea name="Description" class="form-control"
+                      rows="3">@Model.Description</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Category</label>
+            <select name="Category" class="form-select">
+                <option @(Model.Category == "Electronics" ? "selected" : "")>Electronics</option>
+                <option @(Model.Category == "ID & Cards" ? "selected" : "")>ID & Cards</option>
+                <option @(Model.Category == "Bags" ? "selected" : "")>Bags</option>
+                <option @(Model.Category == "Keys" ? "selected" : "")>Keys</option>
+                <option @(Model.Category == "Books" ? "selected" : "")>Books</option>
+                <option @(Model.Category == "Clothing" ? "selected" : "")>Clothing</option>
+                <option @(Model.Category == "Other" ? "selected" : "")>Other</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Location</label>
+            <input type="text" name="Location" class="form-control"
+                   value="@Model.Location" />
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Save Changes
+            </button>
+            <a href="/Student/MyItems" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+    </form>
+</div>

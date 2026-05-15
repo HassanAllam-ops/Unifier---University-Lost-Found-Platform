@@ -1,18 +1,21 @@
-﻿using Unifier___University_Lost___Found_Platform.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Unifier___University_Lost___Found_Platform.Data;
-using Microsoft.AspNetCore.Mvc;
+using Unifier___University_Lost___Found_Platform.Models;
 
 namespace Unifier___University_Lost___Found_Platform.Controllers
 {
-    public class AccountController: Controller
+    public class AccountController : Controller
     {
         // GET: /Account/Login
         public IActionResult Login()
         {
-            // لو بالفعل logged in يروح للهوم
             if (HttpContext.Session.GetString("UserEmail") != null)
-                return RedirectToAction("Index", "Home");
-
+            {
+                var role = HttpContext.Session.GetString("UserRole");
+                return role == "Admin"
+                    ? RedirectToAction("Dashboard", "Admin")
+                    : RedirectToAction("Dashboard", "Student");
+            }
             return View();
         }
 
@@ -31,12 +34,14 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
                 return View(model);
             }
 
-            // حفظ بيانات اليوزر في Session
             HttpContext.Session.SetString("UserEmail", user.Email);
             HttpContext.Session.SetString("UserName", user.FullName);
             HttpContext.Session.SetString("UserRole", user.Role);
 
-            return RedirectToAction("Index", "Home");
+            // كل واحد يروح على Dashboard بتاعه
+            return user.Role == "Admin"
+                ? RedirectToAction("Dashboard", "Admin")
+                : RedirectToAction("Dashboard", "Student");
         }
 
         // GET: /Account/Logout
@@ -45,6 +50,5 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-
     }
 }
