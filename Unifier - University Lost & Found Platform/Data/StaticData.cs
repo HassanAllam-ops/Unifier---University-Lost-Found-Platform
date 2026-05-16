@@ -9,10 +9,10 @@ namespace Unifier___University_Lost___Found_Platform.Data
             new User { Id = 1, FullName = "Ahmed Admin", Email = "admin@university.edu",
                        Password = "admin123", Role = "Admin", StudentId = "ADMIN01" },
 
-            new User { Id = 2, FullName = "Hassan Allam", Email = "hassan@university.edu",
+            new User { Id = 2, FullName = "Hassan Allam", Email = "Hassan@university.edu",
                        Password = "Allam18122022", Role = "Student", StudentId = "STU001" },
 
-            new User { Id = 3, FullName = "Sara Ahmed", Email = "sara@university.edu",
+            new User { Id = 3, FullName = "Sara Ahmed", Email = "Sara@university.edu",
                        Password = "student123", Role = "Student", StudentId = "STU002" },
         };
 

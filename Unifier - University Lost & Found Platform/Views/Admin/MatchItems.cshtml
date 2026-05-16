@@ -1,0 +1,156 @@
+﻿@using Unifier___University_Lost___Found_Platform.Models
+@{
+    ViewData["Title"] = "Match Items";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var lostItems = ViewBag.LostItems as List<LostItem>;
+    var foundItems = ViewBag.FoundItems as List<LostItem>;
+}
+
+<h4 class="fw-bold mb-2"><i class="bi bi-arrow-left-right"></i> Match Items</h4>
+<p class="text-muted mb-4">
+    Select one item from <strong style="color:#ef5350;">Lost</strong> and one from
+    <strong style="color:#66bb6a;">Found</strong> then confirm the match.
+</p>
+
+<form method="post" action="/Admin/Match">
+    @Html.AntiForgeryToken()
+    <div class="row g-4">
+
+        <!-- Lost Items -->
+        <div class="col-md-6">
+            <div class="card p-4" style="border-top: 4px solid #ef5350;">
+                <h6 class="fw-bold mb-3" style="color:#ef5350;">
+                    <i class="bi bi-exclamation-circle"></i> Lost Items
+                    <span class="badge rounded-pill ms-2"
+                          style="background:#ef5350; font-size:0.75rem;">
+                        @(lostItems?.Count ?? 0)
+                    </span>
+                </h6>
+
+                @if (lostItems == null || !lostItems.Any())
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                        <p class="mt-2 mb-0">No lost items</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var item in lostItems)
+                        {
+                            <div class="border rounded-3 p-3 item-card"
+                                 style="cursor:pointer; transition: all 0.2s;"
+                                 onclick="selectItem(this, 'lost_@item.Id', 'lost')">
+                                <div class="d-flex align-items-start gap-3">
+                                    <input type="radio" name="lostId" value="@item.Id"
+                                           id="lost_@item.Id" required
+                                           style="margin-top:4px; width:18px; height:18px;
+                                    accent-color:#ef5350;" />
+                                    <div>
+                                        <strong>@item.Title</strong>
+                                        <span class="badge ms-1"
+                                              style="background:#fff0f0; color:#ef5350;
+                                            font-size:0.7rem;">
+                                            @item.Category
+                                        </span><br />
+                                        <small class="text-muted">@item.Description</small><br />
+                                        <small>
+                                            <i class="bi bi-geo-alt text-danger"></i>
+                                            @item.Location
+                                        </small><br />
+                                        <small>
+                                            <i class="bi bi-person"></i> @item.ReportedByEmail
+                                            &nbsp;
+                                            <i class="bi bi-card-text"></i> @item.StudentId
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Found Items -->
+        <div class="col-md-6">
+            <div class="card p-4" style="border-top: 4px solid #66bb6a;">
+                <h6 class="fw-bold mb-3" style="color:#66bb6a;">
+                    <i class="bi bi-check-circle"></i> Found Items
+                    <span class="badge rounded-pill ms-2"
+                          style="background:#66bb6a; font-size:0.75rem;">
+                        @(foundItems?.Count ?? 0)
+                    </span>
+                </h6>
+
+                @if (foundItems == null || !foundItems.Any())
+                {
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                        <p class="mt-2 mb-0">No found items</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var item in foundItems)
+                        {
+                            <div class="border rounded-3 p-3 item-card"
+                                 style="cursor:pointer; transition: all 0.2s;"
+                                 onclick="selectItem(this, 'found_@item.Id', 'found')">
+                                <div class="d-flex align-items-start gap-3">
+                                    <input type="radio" name="foundId" value="@item.Id"
+                                           id="found_@item.Id" required
+                                           style="margin-top:4px; width:18px; height:18px;
+                                    accent-color:#66bb6a;" />
+                                    <div>
+                                        <strong>@item.Title</strong>
+                                        <span class="badge ms-1"
+                                              style="background:#f1f8e9; color:#66bb6a;
+                                            font-size:0.7rem;">
+                                            @item.Category
+                                        </span><br />
+                                        <small class="text-muted">@item.Description</small><br />
+                                        <small>
+                                            <i class="bi bi-geo-alt text-success"></i>
+                                            @item.Location
+                                        </small><br />
+                                        <small>
+                                            <i class="bi bi-person"></i> @item.ReportedByEmail
+                                            &nbsp;
+                                            <i class="bi bi-card-text"></i> @item.StudentId
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Button -->
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-3"
+                style="font-size:1.1rem; border-radius:12px;">
+            <i class="bi bi-arrow-left-right"></i> Confirm Match
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function selectItem(el, radioId, group) {
+            document.querySelectorAll('.' + group + '-card').forEach(c => {
+                c.style.borderColor = '#dee2e6';
+                c.style.background = 'white';
+            });
+            el.classList.add(group + '-card');
+            el.style.borderColor = group === 'lost' ? '#ef5350' : '#66bb6a';
+            el.style.background = group === 'lost' ? '#fff5f5' : '#f1f8e9';
+            document.getElementById(radioId).checked = true;
+        }
+    </script>
+}

@@ -14,11 +14,26 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
             if (HttpContext.Session.GetString("UserRole") != "Admin")
                 return RedirectToAction("Dashboard", "Student");
 
+            ViewBag.AllItems = StaticData.GetAllItems();
+            ViewBag.TotalLost = StaticData.LostItems.Count(i => i.Status == "Lost");
+            ViewBag.TotalFound = StaticData.LostItems.Count(i => i.Status == "Found");
+            ViewBag.TotalMatched = StaticData.LostItems.Count(i => i.Status == "Matched");
+            ViewBag.TotalClaimed = StaticData.LostItems.Count(i => i.Status == "Claimed");
+
+            return View();
+        }
+
+        // GET: /Admin/MatchItems
+        public IActionResult MatchItems()
+        {
+            if (HttpContext.Session.GetString("UserEmail") == null)
+                return RedirectToAction("Login", "Account");
+
+            if (HttpContext.Session.GetString("UserRole") != "Admin")
+                return RedirectToAction("Dashboard", "Student");
+
             ViewBag.LostItems = StaticData.GetLostItems();
             ViewBag.FoundItems = StaticData.GetFoundItems();
-            ViewBag.TotalLost = StaticData.GetLostItems().Count;
-            ViewBag.TotalFound = StaticData.GetFoundItems().Count;
-            ViewBag.TotalMatched = StaticData.LostItems.Count(i => i.Status == "Matched");
 
             return View();
         }
@@ -37,6 +52,7 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
             ViewBag.TotalFound = StaticData.LostItems.Count(i => i.Status == "Found");
             ViewBag.TotalMatched = StaticData.LostItems.Count(i => i.Status == "Matched");
             ViewBag.TotalClaimed = StaticData.LostItems.Count(i => i.Status == "Claimed");
+
             return View();
         }
 
@@ -54,7 +70,7 @@ namespace Unifier___University_Lost___Found_Platform.Controllers
             else
                 TempData["Error"] = "❌ Match failed. Please try again.";
 
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("MatchItems");
         }
     }
 }
